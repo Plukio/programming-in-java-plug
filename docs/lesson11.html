@@ -17,7 +17,7 @@
 <div class="reveal">
 	<div class="slides">
 		<section data-background-color="#523996">
-			<i>Week 2 | Lesson 9</i>
+			<i>Week 3 | Lesson 11</i>
 			<h1>Application Development</h1>
 			<em>Introduction to Spring Boot framework</em><br />
 		</section>
@@ -432,7 +432,20 @@
 				</p>
 				<pre>
 					<code data-trim data-noescape data-line-numbers class="hljs java">
-						// TODO
+						@Configuration
+						public class HelloConfiguration {
+
+							@Bean
+							public RestTemplate restTemplate() {
+								return new RestTemplate();
+							}
+
+							@Bean
+							public MyBean myBean() {
+								// ... any custom configuration
+							}
+
+						}
 					</code>
 				</pre>
 			</section>
@@ -447,205 +460,13 @@
 					Spring Boot also provides support for testing the application on each of the layers (controller, service, and repository).
 				</p>
 				<p>
-					Testing each layer separately helps to make sure good separation of concerns and to make sure that each layer works as expected.
+					We will cover testing of Controllers, Services and repositories in detail in the next lesson.
 				</p>
-				<hr />
-				<p>
-					It is also good, however, to test the application as a whole, to make sure that all the layers work together as expected.
-				</p>
-			</section>
-			<section>
-				<h3>Mocking and spying</h3>
-				<p>
-					Mocking and spying are techniques used in testing to simulate the behavior of the objects that the class under test depends on.
-					In other words, we can control the internal behavior of the dependencies form the tests.
-				</p>
-				<p>
-					The "poor man's" version of mocking can be when we crate an alternative implementation of the class that is a dependency of the class under test.
-				</p>
-				<p>
-					TODO example mock
-				</p>
-				<p>
-					In reality, we use mocking frameworks, such as Mockito, to create mock objects and spy objects.
-				</p>
-				<p>
-					TODO example of Mockito
-				</p>
-			</section>
-			<section>
-				<h3>Testing Controllers</h3>
-				<div class="row">
-					<p style="font-size: 80%">
-						Testing controllers is relatively simple, because they are just classes that handle the HTTP
-						requests and return the HTTP responses. However, we need some tools to simulate the HTTP
-						requests and responses.
-					</p>
-					<div class="column" style="width: 70%">
-						<pre>
-							<code data-trim data-noescape data-line-numbers class="hljs java" style="font-size: 80%">
-									@WebMvcTest(HelloController.class)
-									public class HelloControllerTest {
-
-										@MockBean
-										private HelloService helloService;
-
-										@Autowired
-										private MockMvc mockMvc;
-
-										private final String path = "/api/hello";
-										private final String name = "Monika";
-										private final String locale = "es";
-										private final String expected = "Hola Monika!";
-
-										@BeforeEach
-										void setUp() {
-											Mockito.when(helloService.sayHello(name, locale)).thenReturn(expected);
-										}
-
-										@Test
-										@DisplayName("GET /api/hello?name={name}&locale={locale} - should responds with 200")
-										void testHelloController() throws Exception {
-											mockMvc.perform(get(path + "?name=" + name + "&locale=" + locale))
-													.andDo(print())
-													.andExpect(status().isOk())
-													.andExpect(content().string(containsString(expected)));
-										}
-
-										@Test
-										@DisplayName("GET /api/hello - should responds with 400")
-										void testHelloControllerMissingParameters() throws Exception {
-											mockMvc.perform(get(path))
-													.andDo(print())
-													.andExpect(status().isBadRequest());
-										}
-
-									}
-							</code>
-						</pre>
-					</div>
-					<div class="column" style="font-size: 70%; width: 30%">
-						<ul>
-							<li>
-								Spring Boot provides the <code>MockMvc</code> class to simulate the HTTP requests and responses.
-							</li>
-							<li>
-								<code>@WebMvcTest</code> annotation with the controller class to be tested will establish a Spring context.
-							</li>
-							<li>
-								<code>@Autowired</code> annotation is used to inject the <code>MockMvc</code> bean into the test class.
-							</li>
-							<li>
-								Ideally, we want to test just the controller, but not the service and repository layers,
-								so we can use the <code>@MockBean</code> annotation to mock the service and repository beans.
-							</li>
-							<li>
-								We can mock the service layer using any mocking library, such as Mockito.
-								In this case we use <code>Mockito.when</code> to mock the service method.
-							</li>
-						</ul>
-					</div>
-
-
-				</div>
-			</section>
-			<!--			<section>-->
-			<!--				<h4>Testing Controllers</h4>-->
-			<!--				<pre>-->
-			<!--					<code data-trim data-noescape data-line-numbers class="hljs java">-->
-			<!--						// TODO-->
-			<!--					</code>-->
-			<!--				</pre>-->
-			<!--			</section>-->
-			<section>
-				<h3>Testing Services</h3>
-				<p>
-					Testing the service layer is perhaps the easiest, because we only need to mock the repository layer.
-					There are multiple appraches you can take.
-				</p>
-				<div class="row" style="font-size: 80%">
-					<div class="column">
-						Either you can test the service layer using Spring Boot's dependency injection,
-						<pre>
-							<code data-trim data-noescape data-line-numbers class="hljs java">
-								@SpringBootTest
-								public class HelloServiceTest {
-
-									@MockBean
-									private HelloRepository helloRepository;
-
-									@Autowired
-									private HelloService helloService;
-
-									@Test
-									@DisplayName("should return localized hello")
-									public void testHelloService() {
-										Mockito.when(helloRepository.selectHelloInLanguage("en"))
-											.thenReturn("Hello");
-
-										String result = helloService.sayHello("Monika", "en");
-										assertEquals("Hello Monika!", result);
-
-										Mockito.verify(helloRepository)
-											.selectHelloInLanguage("en");
-									}
-
-								}
-							</code>
-						</pre>
-						The advantage of this is you are testing the service can be injected correctly.
-						The disadvantage is that the test may be slower and more resource consuming.
-					</div>
-					<div class="column">
-						<br />
-						or you can just inject the dependency yourself.
-						<pre>
-							<code data-trim data-noescape data-line-numbers class="hljs java">
-								public class HelloService2Test {
-
-									private final HelloRepository helloRepository =
-										Mockito.mock(HelloRepository.class);
-
-									private final HelloService helloService =
-										new HelloService(helloRepository);
-
-									@Test
-									@DisplayName("should return localized hello")
-									public void testHelloService() {
-										Mockito.when(helloRepository.selectHelloInLanguage("en"))
-											.thenReturn("Hello");
-
-										String result = helloService.sayHello("Monika", "en");
-										assertEquals("Hello Monika!", result);
-
-										Mockito.verify(helloRepository)
-											.selectHelloInLanguage("en");
-									}
-
-								}
-							</code>
-						</pre>
-						This test is going to be faster, but you are not testing the DI,
-						which is not a big deal if you also have integration tests.
-					</div>
-				</div>
-			</section>
-			<section>
-				<h3>Testing Repositories</h3>
-				<p>
-					Test the repository layer is generally a little more complicated, because it usually involves
-					data sources and databases, and we need to make sure that the database is in a known state before running the tests.
-				</p>
-				<pre>
-					<code data-trim data-noescape data-line-numbers class="hljs java">
-						// TODO
-					</code>
-				</pre>
 			</section>
 		</section>
 		<section>
 			<section data-background-color="#523996">
-				<h2>Practice</h2>
+				<h2>Final Project Introduction</h2>
 			</section>
 		</section>
 	</div>

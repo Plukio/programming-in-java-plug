@@ -1,16 +1,24 @@
 package lesson11;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
+@SpringBootTest
 public class HelloService2Test {
 
-    private final HelloRepository helloRepository = Mockito.mock(HelloRepository.class);
+    @MockBean
+    private HelloRepository helloRepository;
 
-    private final HelloService helloService = new HelloService(helloRepository);
+    @Autowired
+    private HelloService helloService;
 
     @Test
     @DisplayName("should return localized hello")

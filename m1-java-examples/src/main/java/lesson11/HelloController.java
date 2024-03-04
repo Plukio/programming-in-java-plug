@@ -1,5 +1,6 @@
 package lesson11;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,11 +16,11 @@ public class HelloController {
     }
 
     @RequestMapping("/hello")
-    public String getHelloWorld(
+    public ResponseEntity<String> getHelloWorld(
             @RequestParam(value = "name") String name,
             @RequestParam(value = "locale") String locale
     ) {
-        return helloService.sayHello(name, locale);
+        return ResponseEntity.ok(helloService.sayHello(name, locale));
     }
 
 }
