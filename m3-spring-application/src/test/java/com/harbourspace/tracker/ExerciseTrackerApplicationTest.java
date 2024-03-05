@@ -1,14 +1,14 @@
-package lesson11;
+package com.harbourspace.tracker;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class HelloApplicationTest {
+public class ExerciseTrackerApplicationTest {
 
     @Test
-    @DisplayName("Application context should load")
-    void applicationContextLoads() {}
+    @DisplayName("Application loads")
+    public void testApplicationLoads() {}
 
 }
