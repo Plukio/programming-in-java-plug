@@ -8,10 +8,10 @@ public class Student {
     private Integer course;
     private Boolean isEnrolled;
     private LocalDate admissionDate;
-    private LocalDate graduationDate; // Optional
-    private Double grade; // Optional
+    private LocalDate graduationDate;
+    private Double grade;
 
-    public Student(Long id, String fullName, Integer course, Boolean isEnrolled, LocalDate admissionDate, LocalDate graduationDate, Double grade) {
+    public Student(Long id, String fullName, Integer course, Boolean isEnrolled, LocalDate admissionDate,LocalDate graduationDate, Double grade) {
         this.id = id;
         this.fullName = fullName;
         this.course = course;
@@ -27,6 +27,8 @@ public class Student {
     public Integer getCourse() { return course; }
     public Boolean getIsEnrolled() { return isEnrolled; }
     public LocalDate getAdmissionDate() { return admissionDate; }
-    public LocalDate getGraduationDate() { return graduationDate; }
+
+    public LocalDate getGraduationDate() {return graduationDate;}
+
     public Double getGrade() { return grade; }
 }
