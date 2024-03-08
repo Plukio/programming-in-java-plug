@@ -3,6 +3,7 @@ package com.harbourspace.tracker.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.harbourspace.tracker.config.SecurityConfiguration;
 import com.harbourspace.tracker.authorization.AuthorizationService;
+import com.harbourspace.tracker.user.jdbc.UserJdbcService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     @MockBean
-    private UserService userService;
+    private UserService userService; // we are mocking interface!
 
     @MockBean
     private AuthorizationService authorizationService;
@@ -43,7 +44,7 @@ public class UserControllerTest {
         Mockito.when(userService.getUsers()).thenReturn(UserFixtures.users);
         Mockito.when(userService.getUserById(1L)).thenReturn(UserFixtures.user1);
         Mockito.when(userService.createUser(UserFixtures.newUser)).thenReturn(UserFixtures.user3);
-        Mockito.when(userService.updateUser(3L, UserFixtures.user3Updated)).thenReturn(UserFixtures.user3Updated);
+        Mockito.when(userService.updateUser(UserFixtures.user3Updated)).thenReturn(UserFixtures.user3Updated);
     }
 
     @Test

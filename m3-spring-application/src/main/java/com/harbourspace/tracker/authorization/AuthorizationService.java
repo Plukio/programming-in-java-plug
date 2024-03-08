@@ -3,7 +3,7 @@ package com.harbourspace.tracker.authorization;
 import com.harbourspace.tracker.config.ApplicationConfiguration;
 import com.harbourspace.tracker.error.NotFoundException;
 import com.harbourspace.tracker.user.model.User;
-import com.harbourspace.tracker.user.UserRepository;
+import com.harbourspace.tracker.user.jdbc.UserJdbcRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,9 +19,9 @@ public class AuthorizationService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthorizationService.class);
 
-    private final UserRepository userRepository;
+    private final UserJdbcRepository userRepository;
 
-    public AuthorizationService(UserRepository userRepository) {
+    public AuthorizationService(UserJdbcRepository userRepository) {
         this.userRepository = userRepository;
     }
 

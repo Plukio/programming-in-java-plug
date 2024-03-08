@@ -97,7 +97,7 @@
 				</p>
 				<ol>
 					<li>
-						Defines methods andcpaths to resources
+						Defines methods and paths to resources
 						<ul>
 							<li>Path parameters</li>
 							<li>Query parameters</li>
@@ -184,7 +184,7 @@
 				<pre>
 					<code data-trim data-noescape data-line-numbers class="hljs java">
 						@PutMapping("/{id}")
-						public ResponseEntity&lt;User$gt; getUser(@PathVariable("id") Long id) {
+						public ResponseEntity&lt;User&gt; getUser(@PathVariable("id") Long id) {
 							// ...
 						}
 					</code>
@@ -206,14 +206,14 @@
 				<pre>
 					<code data-trim data-noescape data-line-numbers class="hljs java">
 						@GetMapping("/{id}")
-						public ResponseEntity&lt;User$gt; getUser(
+						public ResponseEntity&lt;User&gt; getUser(
 							@PathVariable("id") Long id
 						) {
 							// ...
 						}
 
 						@GetMapping()
-						public ResponseEntity&lt;List&lt;User&gt;$gt; getUsers(
+						public ResponseEntity&lt;List&lt;User&gt;&gt; getUsers(
 							@RequestParam("page") int page,
 							@RequestParam("size") int size
 						) {
@@ -221,7 +221,7 @@
 						}
 
 						@PostMapping()
-						public ResponseEntity&lt;User$gt; postUser(
+						public ResponseEntity&lt;User&gt; postUser(
 							@RequestBody NewUser user
 						) {
 							// ...

@@ -19,58 +19,360 @@
 		<section data-background-color="#523996">
 			<i>Week 3 | Lesson 14</i>
 			<h1>Spring Boot Application</h1>
-			<em>Microservice architecture (Spring Cloud)</em><br />
-			<em>Asynchronous architecture</em><br />
-			<em>Event based architecture</em>
-			<em>Reactive streams</em>
-			<em>Consuming APIs</em>
-			<em>Caching</em>
+			<em>Application Architecture</em><br />
+			<em>Spring MVC vs. WebFlux</em><br />
+			<!--			<em>Spring Cloud</em><br />-->
+			<!--			<em>Consuming APIs, Caching</em><br />-->
+		</section>
+		<section>
+			<section data-background-color="#523996">
+				<h2>Spring Boot Application</h2>
+				<em>Configuration</em>
+			</section>
+			<section>
+				<h3>Configuration</h3>
+				<p>
+					Sometimes it is useful to provide some defaults or settings throuh the application configuration.
+				</p>
+				<p>
+					There are multiple mechanisms to do so, the easiest is to annotate class field with <code>@Value</code> annotation.
+				</p>
+				<pre>
+					<code data-trim data-noescape data-line-numbers class="hljs java">
+						@Service
+						public class HelloService {
+
+							@Value("${hello.default-name}")
+							private String defaultName;
+
+							@Value("${hello.default-locale}")
+							private String defaultLocale;
+
+							private final HelloRepository helloRepository;
+
+							public HelloService(HelloRepository helloRepository) {
+								this.helloRepository = helloRepository;
+							}
+
+							public String sayHello(String name, String locale) {
+								String hello = helloRepository.selectHelloInLanguage(locale != null ? locale : defaultLocale);
+								return String.format("%s %s!", hello, name != null ? name : defaultName);
+							}
+
+						}
+					</code>
+				</pre>
+				<pre>
+					<code data-trim data-noescape data-line-numbers class="hljs properties">
+						hello:
+						  default-name: Anonymous
+						  default-locale: en
+					</code>
+				</pre>
+			</section>
+			<section>
+				<h3>Configuration</h3>
+				<p>
+					Another option is to create configuration class
+				</p>
+				<pre>
+					<code data-trim data-noescape data-line-numbers class="hljs java">
+						@Configuration
+						@ConfigurationProperties(prefix = "hello")
+						public class HelloConfigurationProperties {
+
+							private String defaultName;
+							private String defaultLocale;
+
+							public String getDefaultName() {
+								return defaultName;
+							}
+
+							public String getDefaultLocale() {
+								return defaultLocale;
+							}
+
+							public void setDefaultName(String defaultName) {
+								this.defaultName = defaultName;
+							}
+
+							public void setDefaultLocale(String defaultLocale) {
+								this.defaultLocale = defaultLocale;
+							}
+						}
+					</code>
+				</pre>
+			</section>
+			<section>
+				<h4>Configuration</h4>
+				<pre>
+					<code data-trim data-noescape data-line-numbers class="hljs java">
+						@Service
+						public class HelloService {
+
+							private final HelloRepository helloRepository;
+							private final HelloConfigurationProperties config;
+
+							public HelloService(HelloRepository helloRepository, HelloConfigurationProperties config) {
+								this.helloRepository = helloRepository;
+								this.config = config;
+							}
+
+							public String sayHello(String name, String locale) {
+								String hello = helloRepository.selectHelloInLanguage(locale != null ? locale : config.getDefaultLocale());
+								return String.format("%s %s!", hello, name != null ? name : config.getDefaultName());
+							}
+
+						}
+					</code>
+				</pre>
+			</section>
 		</section>
 		<section>
 			<section data-background-color="#523996">
 				<h2>Application Architecture</h2>
 			</section>
 			<section>
-				<h3>Common Architecture Patterns</h3>
+				<h3>Application Architecture</h3>
 				<p>
-					There are several common architecture patterns that are used in the development of software applications.
-					These patterns are used to define the structure of the application and the way in which the different components of the application interact with each other.
-					Some of the most common architecture patterns include:
+					There are several application architecture approaches that are commonly used in the development
+					of software applications, which are used to define the structure of the application and the way
+					in which the different components of the application interact with each other.
+				</p>
+				<p>
+					One way many ways to categorize them is by how loosely or tightly coupled the application components are, as ...
 				</p>
 				<ul>
 					<li>Monolithic Architecture</li>
 					<li>Microservice Architecture</li>
 					<li>Serverless Architecture</li>
 				</ul>
+				<p>
+					Or how the application components interact with each other, as ...
+				</p>
+				<ul>
+					<li>Synchronous (Request/Response)</li>
+					<li>Asynchronous (Event-Driven)</li>
+				</ul>
 			</section>
 			<section>
 				<h3>Monolithic Architecture</h3>
 				<p>
-					TODO
+					With monolithic architecture, the application is built and deployed as a single unit.
+					All the application components are part of the same codebase.
 				</p>
+				<hr />
+				<p>
+					<strong>Advantages</strong>
+				</p>
+				<ul>
+					<li>This architecture may be better for small applications.</li>
+					<li>On small applications, monolithic architecture, is easier to develop test and deploy.</li>
+				</ul>
+				<p>
+					<strong>Disadvantages</strong>
+				</p>
+				<ul>
+					<li>When change is made in one component, the entire application needs to be rebuilt and redeployed.</li>
+					<li>The application can only by scaled as a single unit.</li>
+					<li>Larger applications can become difficult to manage and maintain.</li>
+					<li>Monolithic architecture is not suitable for large applications, as it can become difficult to develop and maintain.</li>
+					<li>Unfortunately, in real the world, it is often large applications that are monolithic.</li>
+				</ul>
 			</section>
 			<section>
 				<h3>Microservice Architecture</h3>
 				<p>
-					TODO
+					With microservice architecture, the application is broken down into a set of smaller,
+					independent services that are developed and deployed separately.
 				</p>
+				<hr />
+				<p>
+					<strong>Advantages</strong>
+				</p>
+				<ul>
+					<li>Individual services can be run and deployed independently.</li>
+					<li>Higher resiliency and fault tolerance - if one service fails, the rest of the system should still be available.</li>
+					<li>Better scalability - each service can be scaled independently</li>
+				</ul>
+				<p>
+					<strong>Disadvantages</strong>
+				</p>
+				<ul>
+					<li>Infrastructure may be more challenging to maintain.</li>
+					<li>Developers must account for the additional complexity of managing the communication between services.</li>
+					<li>Developers must be careful to avoid creating a distributed monolith by having highly dependent services.</li>
+				</ul>
 			</section>
 			<section>
 				<h3>Serverless Architecture</h3>
 				<p>
-					TODO
+					With serverless architecture, the application is built and deployed as a set of functions that
+					are executed in response to events.
 				</p>
+				<p>
+					<strong>Advantages</strong>
+				</p>
+				<ul>
+					<li>High level of scalability</li>
+					<li>High level of availability</li>
+					<li>High level of fault tolerance</li>
+					<li>Operational cost - depends on the actual usage.</li>
+				</ul>
+				<p>
+					<strong>Disadvantages</strong>
+				</p>
+				<ul>
+					<li>Testng, debugging and monitoring may be challenging</li>
+					<li>Often comes with vendor lock-in in form of the cloud provider</li>
+					<li>Execution limits (maximum execution time)</li>
+					<li>Startup latency</li>
+				</ul>
+			</section>
+			<section>
+				<h3>Event-Driven Architecture</h3>
+				<em>Synchronous vs. Asynchronous communication</em>
+				<!--				<p>-->
+				<!--					Another way to look at architecture is by how the application components interact with each other.-->
+				<!--				</p>-->
+				<hr />
+				<p>
+					Traditional applications, like RESTful web services, are often built using a
+					<strong>synchronous</strong> communication model.
+					<br />
+					=
+					<br />
+					<em>Client sends a request to the server, the server processes the request and sends a response back to the client.</em>
+				</p>
+				<hr />
+				<p>
+					<strong>Event-Driven Architecture</strong>, is built on an <strong>asynchronous</strong> communication model.
+					<br />
+					=
+					<br />
+					<em>Sender sends a message and continues with other work without waiting for the recipient to process the message and reply.</em>
+				</p>
+				<hr />
+				<blockquote>
+					Both models can be used for communication between system component as well with the system components themselves.
+				</blockquote>
+			</section>
+			<section>
+				<h3>Event-Driven Architecture</h3>
+				<p>
+					In event-driven architecture, components of the system are emitting events and reacting to events emitting by other components.
+				</p>
+				<p>
+					Events are emitted and consumed through a message broker (message queues).
+					(example of such are RabbitMQ, Kafka, etc.)
+				</p>
+				<p>
+					This model is also often called <strong>Publisher-Subscriber</strong> or <strong>Publisher-Consumer</strong> model.
+				</p>
+				<p>
+					This architecture provides high level of decoupling between components.
+					Individual components only know what messages they produce and receive, but do not know anything about the system producing and consuming them.
+				</p>
+				<p>
+					Another advantage of this model is that there may be multiple Subscribers (consumers) for a single message.
+				</p>
+
 			</section>
 		</section>
 		<section>
 			<section data-background-color="#523996">
-				<h2>Service Design Patterns</h2>
+				<h2>Spring WebFlux</h2>
 			</section>
 			<section>
-				<h3>Asynchronous Services</h3>
+				<h3>Spring WebFlux</h3>
+				<p>
+					In this course, we worked with the Spring MVC model. But it is not the only model of building applications with Spring.
+					The alternative to Spring MVC is <strong>Spring Webflux</strong>.
+				</p>
+				<hr />
+				<p>
+					<strong>Spring MVC</strong>
+				</p>
+				<ul>
+					<li>Spring MVC uses a blocking I/O model, which means the thread that runs the application code will wait or block for each input/output operation.</li>
+					<li>This framework is a good choice when developing a traditional web application or REST API.</li>
+				</ul>
+				<p>
+					<strong>Spring Webflux</strong>
+				</p>
+				<ul>
+					<li>Spring Webflux is a framework based on reactive streams, and is fully non-blocking.</li>
+					<li>It offers a choice of using either asynchronous or synchronous I/O.</li>
+					<li>Because of its non-blocking nature, Webflux allows many more requests to be handled concurrently.</li>
+					<li>In general, this framework is a good choice when you need to handle a large number of concurrent connections with fewer threads (like in a mobile API, real-time status updates, and remote event notifications).</li>
+				</ul>
 			</section>
 			<section>
-				<h3>Event Bases Architecture</h3>
+				<h3>Reactive Streams</h3>
+				<p>
+					Reactive Streams is a specification for asynchronous stream processing with non-blocking back pressure.
+				</p>
+				<hr />
+				<p>
+					Reactive streams are build on 4 principles:
+				</p>
+				<ul style="font-size: 80%">
+					<li>
+						<strong>Asynchronous</strong><br />
+						In a <strong>synchronous</strong> communication, the sender sends a message and waits for the recipient to process the message and reply.<br />
+						In an <strong>asynchronous</strong> communication, the sender sends a message and continues with other work. The recipient will process the message and reply when it has completed its business.
+					</li>
+					<li>
+						<strong>Non-blocking</strong><br />
+						In the non-blocking paradigm, a piece of code will never stop the progress of the execution because it needs input from another piece.
+						The execution will continue, and when the input is available, it will complete the operation.
+					</li>
+					<li>
+						<strong>Stream Processing</strong><br />
+						Stream processing is a computational model that allows real-time processing of data feeds from many sources concurrently.
+						<!--						It is beneficial when working with a high volume of data, each of which needs to be processed as it arrives—in other words, -->
+						<!--						processing the data "online" as opposed to "batch" processing.-->
+					</li>
+					<li>
+						<strong>Back pressure</strong><br />
+						Back Pressure is a way for a consumer of data to communicate with its producer about its current availability,
+						effectively slowing down the production rate to match the consumption rate.
+						Without back pressure, a fast producer can overwhelm a slow consumer leading to resource exhaustion.
+					</li>
+				</ul>
+				<!--				<p>-->
+				<!--					Reactive streams are by design asynchronous and non-blocking.-->
+				<!--					This means that the consumer can consume data as it is produced, without having to wait for the producer to finish producing the data.-->
+				<!--				</p>-->
+				<!--				<p>-->
+				<!--					Back pressure is a way for a consumer to tell a producer to slow down.-->
+				<!--					It is a way to handle a situation where the producer is producing data faster than the consumer can consume it.-->
+				<!--				</p>-->
+			</section>
+		</section>
+		<section>
+			<section data-background-color="#523996">
+				<h2>Spring Cloud</h2>
+			</section>
+			<section>
+				<h3>Spring Cloud</h3>
+				<p>
+					Spring Cloud is a set of tools and libraries that are used to build and deploy cloud-native applications.
+					These tools are primarily used to develop applications using microservice or serverless architecture.
+				</p>
+				<p>
+					Tools and libraries that are part of Spring Cloud include:
+				</p>
+				<ul>
+					<li>Integration with cloud providers such as AWS and Azure</li>
+					<li>Distributed configuration</li>
+					<li>Service registration and discovery</li>
+					<li>Service-to-service communication and messaging</li>
+					<li>Routing, load balancing and circuit breakers</li>
+					<li>Short-lived microservices</li>
+					<li>Cloud security</li>
+					<li>Testing support</li>
+				</ul>
 			</section>
 		</section>
 		<section>

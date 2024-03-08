@@ -1,1 +1,4 @@
 GET http://localhost:8083/api/hello?name=Monika&locale=en
+
+###
+GET http://localhost:8083/api/hello

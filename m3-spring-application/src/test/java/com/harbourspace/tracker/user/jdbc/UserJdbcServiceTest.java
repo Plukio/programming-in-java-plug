@@ -1,19 +1,22 @@
-package com.harbourspace.tracker.user;
+package com.harbourspace.tracker.user.jdbc;
 
 import com.harbourspace.tracker.error.AuthorizationException;
 import com.harbourspace.tracker.authorization.AuthorizationService;
+import com.harbourspace.tracker.user.UserFixtures;
+import com.harbourspace.tracker.user.jdbc.UserJdbcRepository;
+import com.harbourspace.tracker.user.jdbc.UserJdbcService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class UserServiceTest {
+public class UserJdbcServiceTest {
 
-    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private final UserJdbcRepository userRepository = Mockito.mock(UserJdbcRepository.class);
     private final AuthorizationService authorizationService = Mockito.mock(AuthorizationService.class);
 
-    private final UserService userService = new UserService(userRepository, authorizationService);
+    private final UserJdbcService userServiceImpl = new UserJdbcService(userRepository, authorizationService);
 
     @BeforeEach
     public void mock() {
@@ -25,7 +28,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("should return all users")
     public void testGetUsers() {
-        Assertions.assertEquals(UserFixtures.users, userService.getUsers());
+        Assertions.assertEquals(UserFixtures.users, userServiceImpl.getUsers());
 
         Mockito.verify(userRepository).selectAll();
     }
@@ -33,7 +36,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("should user by id")
     public void testGetUser() {
-        Assertions.assertEquals(UserFixtures.user1, userService.getUserById(1L));
+        Assertions.assertEquals(UserFixtures.user1, userServiceImpl.getUserById(1L));
 
         Mockito.verify(userRepository).selectById(1L);
     }
@@ -44,7 +47,7 @@ public class UserServiceTest {
 
         Mockito.when(userRepository.insert(UserFixtures.newUser)).thenReturn(UserFixtures.user3);
 
-        Assertions.assertEquals(UserFixtures.user3, userService.createUser(UserFixtures.newUser));
+        Assertions.assertEquals(UserFixtures.user3, userServiceImpl.createUser(UserFixtures.newUser));
 
         Mockito.verify(userRepository).insert(UserFixtures.newUser);
     }
@@ -52,17 +55,17 @@ public class UserServiceTest {
     @Test
     @DisplayName("should update user")
     public void testUpdateUser() {
-        Mockito.when(userRepository.update(3L, UserFixtures.user3Updated)).thenReturn(UserFixtures.user3Updated);
+        Mockito.when(userRepository.update(UserFixtures.user3Updated)).thenReturn(UserFixtures.user3Updated);
 
-        Assertions.assertEquals(UserFixtures.user3Updated, userService.updateUser(3L, UserFixtures.user3Updated));
+        Assertions.assertEquals(UserFixtures.user3Updated, userServiceImpl.updateUser(UserFixtures.user3Updated));
 
-        Mockito.verify(userRepository).update(3L, UserFixtures.user3Updated);
+        Mockito.verify(userRepository).update(UserFixtures.user3Updated);
     }
 
     @Test
     @DisplayName("should delete user")
     public void testDeleteUser() {
-        userService.deleteUser(3L);
+        userServiceImpl.deleteUser(3L);
 
         Mockito.verify(userRepository).delete(3L);
     }
@@ -72,7 +75,7 @@ public class UserServiceTest {
     public void testGetUsersNotAdmin() {
         Mockito.when(authorizationService.isSystem()).thenReturn(false);
 
-        Assertions.assertThrows(AuthorizationException.class, userService::getUsers);
+        Assertions.assertThrows(AuthorizationException.class, userServiceImpl::getUsers);
 
         Mockito.verifyNoInteractions(userRepository);
     }
@@ -82,7 +85,7 @@ public class UserServiceTest {
     public void getGetUserNotAdmin() {
         Mockito.when(authorizationService.isSystem()).thenReturn(false);
 
-        Assertions.assertThrows(AuthorizationException.class, () -> userService.getUserById(1L));
+        Assertions.assertThrows(AuthorizationException.class, () -> userServiceImpl.getUserById(1L));
 
         Mockito.verifyNoInteractions(userRepository);
     }
@@ -92,7 +95,7 @@ public class UserServiceTest {
     public void createUserNotAdmin() {
         Mockito.when(authorizationService.isSystem()).thenReturn(false);
 
-        Assertions.assertThrows(AuthorizationException.class, () -> userService.createUser(UserFixtures.newUser));
+        Assertions.assertThrows(AuthorizationException.class, () -> userServiceImpl.createUser(UserFixtures.newUser));
 
         Mockito.verifyNoInteractions(userRepository);
     }
@@ -102,7 +105,7 @@ public class UserServiceTest {
     public void testUpdateUserNotAdmin() {
         Mockito.when(authorizationService.isSystem()).thenReturn(false);
 
-        Assertions.assertThrows(AuthorizationException.class, () -> userService.updateUser(3L, UserFixtures.user3Updated));
+        Assertions.assertThrows(AuthorizationException.class, () -> userServiceImpl.updateUser(UserFixtures.user3Updated));
 
         Mockito.verifyNoInteractions(userRepository);
     }
@@ -112,7 +115,7 @@ public class UserServiceTest {
     public void testDeleteUserNotAdmin() {
         Mockito.when(authorizationService.isSystem()).thenReturn(false);
 
-        Assertions.assertThrows(AuthorizationException.class, () -> userService.deleteUser(3L));
+        Assertions.assertThrows(AuthorizationException.class, () -> userServiceImpl.deleteUser(3L));
 
         Mockito.verifyNoInteractions(userRepository);
     }

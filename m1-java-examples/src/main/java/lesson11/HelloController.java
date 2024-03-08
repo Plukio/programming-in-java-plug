@@ -17,8 +17,8 @@ public class HelloController {
 
     @RequestMapping("/hello")
     public ResponseEntity<String> getHelloWorld(
-            @RequestParam(value = "name") String name,
-            @RequestParam(value = "locale") String locale
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "locale", required = false) String locale
     ) {
         return ResponseEntity.ok(helloService.sayHello(name, locale));
     }
