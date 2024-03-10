@@ -13,9 +13,9 @@ import org.mockito.Mockito;
 
 public class UserJdbcServiceTest {
 
+
     private final UserJdbcRepository userRepository = Mockito.mock(UserJdbcRepository.class);
     private final AuthorizationService authorizationService = Mockito.mock(AuthorizationService.class);
-
     private final UserJdbcService userServiceImpl = new UserJdbcService(userRepository, authorizationService);
 
     @BeforeEach

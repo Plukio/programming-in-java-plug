@@ -46,6 +46,18 @@ public class AuthorizationService {
         }
     }
 
+    public Long getCurrentUserId() {
+        var userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = userRepository.selectById(userId);
+
+        if (user == null) {
+            logger.error("User not found for id: " + userId);
+            throw new NotFoundException("User not found");
+        } else {
+            return user.id();
+        }
+    }
+
     /**
      * Returns true if current user is SYSTEM user
      * @return boolean
