@@ -45,11 +45,9 @@ public class ExerciseControllerTest {
     private AuthorizationService authorizationService;
 
     private Exercise exercise;
-    private NewExercise newExercise;
 
     @BeforeEach
     void setUp() {
-        newExercise = new NewExercise(1L, 1L, LocalDateTime.now(), 30);
         exercise = new Exercise(1L, 1L, 1L, LocalDateTime.now(), 30);
 
         Mockito.when(exerciseService.getAllExercisesForUser(Mockito.anyLong())).thenReturn(Arrays.asList(exercise));
@@ -64,7 +62,7 @@ public class ExerciseControllerTest {
     void testGetAllExercisesForUser() throws Exception {
         Mockito.when(authorizationService.getCurrentUserId()).thenReturn(1L);
         mockMvc.perform(get("/api/exercises")
-                        .param("userId", "1").header("Authorization", "Basic 0"))
+                        .param("userId", "1").header("Authorization", "Basic 1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(exercise.id()));
@@ -86,7 +84,7 @@ public class ExerciseControllerTest {
                         .param("userId", "1")
                         .param("date", date.toString())
                         .param("minDuration", "20")
-                        .param("maxDuration", "60").header("Authorization", "Basic 0"))
+                        .param("maxDuration", "60").header("Authorization", "Basic 1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(exercises.size()));
@@ -102,7 +100,7 @@ public class ExerciseControllerTest {
 
         mockMvc.perform(get("/api/exercises/{id}", 1)
                         .param("userId", "1")
-                        .header("Authorization", "Basic 0"))
+                        .header("Authorization", "Basic 1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(exercise.id()));
@@ -124,7 +122,7 @@ public class ExerciseControllerTest {
                         .param("userId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newExerciseJson)
-                        .header("Authorization", "Basic 0"))
+                        .header("Authorization", "Basic 1"))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(createdExercise.id()));
@@ -138,7 +136,7 @@ public class ExerciseControllerTest {
         Mockito.doNothing().when(exerciseService).deleteExercise(1L, 1L);
 
         mockMvc.perform(delete("/api/exercises/{id}", 1)
-                        .param("userId", "1").header("Authorization", "Basic 0"))
+                        .param("userId", "1").header("Authorization", "Basic 1"))
                 .andExpect(status().isNoContent());
     }
 
@@ -157,7 +155,7 @@ public class ExerciseControllerTest {
         mockMvc.perform(put("/api/exercises/{id}", 1)
                         .param("userId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updatedExerciseJson).header("Authorization", "Basic 0"))
+                        .content(updatedExerciseJson).header("Authorization", "Basic 1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.duration").value(updated.duration()));

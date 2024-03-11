@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     @MockBean
-    private UserService userService; // we are mocking interface!
+    private UserService userService;
 
     @MockBean
     private AuthorizationService authorizationService;

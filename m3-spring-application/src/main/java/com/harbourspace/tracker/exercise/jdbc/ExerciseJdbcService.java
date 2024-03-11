@@ -2,7 +2,6 @@ package com.harbourspace.tracker.exercise.jdbc;
 
 import com.harbourspace.tracker.authorization.AuthorizationService;
 import com.harbourspace.tracker.error.AuthorizationException;
-import com.harbourspace.tracker.error.NotFoundException;
 import com.harbourspace.tracker.exercise.ExerciseService;
 import com.harbourspace.tracker.exercise.model.Exercise;
 import com.harbourspace.tracker.exercise.model.NewExercise;

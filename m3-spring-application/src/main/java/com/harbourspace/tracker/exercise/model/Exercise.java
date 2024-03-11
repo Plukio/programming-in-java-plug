@@ -8,4 +8,6 @@ public record Exercise(
     Long activityId,
     LocalDateTime startTime,
     Integer duration
-) {}
+) {
+
+}
