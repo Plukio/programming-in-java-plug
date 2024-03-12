@@ -45,4 +45,6 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         var response = new ErrorResponse(ex.getMessage(), status.value());
         return handleExceptionInternal(ex, response, new HttpHeaders(), status, request);
     }
+
+
 }

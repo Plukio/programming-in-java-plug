@@ -13,7 +13,7 @@ create table if not exists activity
     unique (user_id, name)
 );
 
-create table if not exists exercise
+create table if not exists exercises
 (
     id bigint auto_increment primary key,
     user_id bigint not null references users(id) on delete cascade,
