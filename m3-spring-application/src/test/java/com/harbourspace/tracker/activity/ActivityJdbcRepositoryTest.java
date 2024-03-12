@@ -68,7 +68,7 @@ public class ActivityJdbcRepositoryTest {
     @Test
     @DisplayName("insert should add a new USER activity type")
     void insert() {
-        Activity newActivity = new Activity(null, 1L, "USER", "Cycling", 8.0);
+        NewActivity newActivity = new NewActivity(1L, "USER", "Cycling", 8.0);
         Activity insertedActivity = activityRepository.insert(1L, newActivity);
         Assertions.assertNotNull(insertedActivity);
         Assertions.assertEquals("Cycling", insertedActivity.name());
@@ -87,7 +87,7 @@ public class ActivityJdbcRepositoryTest {
     @Test
     @DisplayName("deleteById should remove an activity")
     void deleteById() {
-        Activity insertedActivity = activityRepository.insert(1L, ActivityFixtures.jogging);
+        Activity insertedActivity = activityRepository.insert(1L, ActivityFixtures.newActivity);
         activityRepository.deleteById(1L, insertedActivity.id());
         Optional<Activity> foundExercise = activityRepository.findByIdAndUserId(1L, insertedActivity.id());
         Assertions.assertEquals(foundExercise, Optional.empty());

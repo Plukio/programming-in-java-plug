@@ -46,7 +46,7 @@ public class ActivityJdbcRepository {
         );
     }
 
-    public Activity insert(Long userId, Activity activity) {
+    public Activity insert(Long userId, NewActivity activity) {
         logger.debug("Inserting new USER activity type for user {}", userId);
         jdbcTemplate.update(
                 "INSERT INTO activities (user_id, type, name, kcal_per_minute) VALUES (?, ?, ?, ?)",
