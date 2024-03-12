@@ -53,7 +53,7 @@ public class ActivityJdbcServiceTest {
     @Test
     @DisplayName("should create an activity for a user")
     public void testCreateActivity() {
-        NewActivity newActivity = new NewActivity( 1L, "USER", "New Activity", 5.0);
+        NewActivity newActivity = new NewActivity( 1L, "New Activity", 5.0);
         when(activityRepository.insert(1L, newActivity)).thenReturn(ActivityFixtures.newUserActivity);
 
         Activity createdActivity = activityService.addActivity(1L, newActivity);

@@ -53,9 +53,9 @@ class ActivityControllerTest {
     void setUp() {
 
         Mockito.when(activityService.getAllActivitiesForUser(1L))
-                .thenReturn(Collections.singletonList(new Activity(1L, 1L, "USER", "Jogging", 7.0)));
+                .thenReturn(Collections.singletonList(new Activity(1L, 1L,  "Jogging", 7.0)));
         Mockito.when(activityService.getActivityById(1L, 1L))
-                .thenReturn(Optional.of(new Activity(1L, 1L, "USER", "Jogging", 7.0)));
+                .thenReturn(Optional.of(new Activity(1L, 1L,  "Jogging", 7.0)));
 
     }
 
@@ -74,8 +74,8 @@ class ActivityControllerTest {
     @Test
     @DisplayName("Create Activity /api/activities")
     void createActivityForAuthorizedUser() throws Exception {
-        NewActivity newActivity = new NewActivity(1L, "USER","Cycling", 8.5);
-        Activity createdActivity = new Activity(2L, 1L, "USER", "Cycling", 8.5);
+        NewActivity newActivity = new NewActivity(1L, "Cycling", 8.5);
+        Activity createdActivity = new Activity(2L, 1L,  "Cycling", 8.5);
 
         Mockito.when(activityService.addActivity(Mockito.eq(1L), Mockito.any(NewActivity.class)))
                 .thenReturn(createdActivity);
@@ -94,8 +94,8 @@ class ActivityControllerTest {
     @Test
     @DisplayName("Update Activity /api/activities/{id}")
     void updateActivityForAuthorizedUser() throws Exception {
-        NewActivity updatedActivity = new NewActivity(1L, "USER" ,"Updated Cycling", 9.0);
-        Activity updated = new Activity(1L, 1L, "USER", "Updated Cycling", 9.0);
+        NewActivity updatedActivity = new NewActivity(1L ,"Updated Cycling", 9.0);
+        Activity updated = new Activity(1L, 1L, "Updated Cycling", 9.0);
 
         Mockito.when(activityService.updateActivity(Mockito.eq(1L), Mockito.eq(1L), Mockito.any(NewActivity.class)))
                 .thenReturn(updated);
@@ -128,29 +128,14 @@ class ActivityControllerTest {
         long userId = 1L;
         long activityId = 1L;
 
-        // Mock the behavior to throw a ConflictException when trying to delete an activity that is in use
         doThrow(new ConflictException("Cannot delete activity type as it is used in user activities."))
                 .when(activityService).deleteActivity(userId, activityId);
 
-        // Perform the delete request and expect a conflict status with the specific error message
         mockMvc.perform(delete("/api/activities/{id}", activityId)
                         .param("userId", String.valueOf(userId))
                         .header("Authorization", "Basic 1"))
                 .andExpect(status().isConflict());
     }
-
-
-
-
-    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Cannot delete activity type as it is used in user activities.")
-    public class ConflictException extends RuntimeException {
-        public ConflictException(String message) {
-            super(message);
-        }
-    }
-
-
-
 
 
 

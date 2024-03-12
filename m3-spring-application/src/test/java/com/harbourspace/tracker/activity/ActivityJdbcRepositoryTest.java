@@ -39,14 +39,13 @@ public class ActivityJdbcRepositoryTest {
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS activities (" +
                 "id SERIAL PRIMARY KEY, " +
                 "user_id BIGINT NOT NULL, " +
-                "type VARCHAR(255), " +
                 "name VARCHAR(255), " +
                 "kcal_per_minute DOUBLE PRECISION" +
                 ");");
 
         // Insert some test activities
-        jdbcTemplate.update("INSERT INTO activities (user_id, type, name, kcal_per_minute) VALUES (0, 'SYSTEM', 'Running', 10.0)");
-        jdbcTemplate.update("INSERT INTO activities (user_id, type, name, kcal_per_minute) VALUES (1, 'USER', 'Jogging', 7.0)");
+        jdbcTemplate.update("INSERT INTO activitiy (user_id, name, kcal_per_minute) VALUES (0, 'Running', 10.0)");
+        jdbcTemplate.update("INSERT INTO activitiy (user_id,,name, kcal_per_minute) VALUES (1, 'Jogging', 7.0)");
     }
 
     @Test
@@ -68,7 +67,7 @@ public class ActivityJdbcRepositoryTest {
     @Test
     @DisplayName("insert should add a new USER activity type")
     void insert() {
-        NewActivity newActivity = new NewActivity(1L, "USER", "Cycling", 8.0);
+        NewActivity newActivity = new NewActivity(1L,"Cycling", 8.0);
         Activity insertedActivity = activityRepository.insert(1L, newActivity);
         Assertions.assertNotNull(insertedActivity);
         Assertions.assertEquals("Cycling", insertedActivity.name());
@@ -78,7 +77,7 @@ public class ActivityJdbcRepositoryTest {
     @DisplayName("update should modify an existing USER activity type")
     void update() {
 
-        NewActivity updatedActivity = new NewActivity(1L, "USER", "Updated Running", 11.0);
+        NewActivity updatedActivity = new NewActivity(1L, "Updated Running", 11.0);
         Activity result = activityRepository.update(1L, 1L, updatedActivity);
         assertNotNull(result);
         Assertions.assertEquals("Updated Running", result.name());

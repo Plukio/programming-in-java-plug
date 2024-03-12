@@ -38,7 +38,7 @@ public class ActivityJdbcService implements ActivityService {
             throw new AuthorizationException("User is not authorized for this operation.");
         }
         Optional<Activity> activity = activityRepository.findByIdAndUserId(userId, id);
-        if (activity.isPresent() && activity.get().type().equals("SYSTEM") && !userId.equals(ApplicationConfiguration.SYSTEM_USER_ID)) {
+        if (activity.isPresent() && !userId.equals(ApplicationConfiguration.SYSTEM_USER_ID)) {
             throw new AuthorizationException("Access to SYSTEM activity type is not allowed.");
         }
         else {
@@ -50,7 +50,7 @@ public class ActivityJdbcService implements ActivityService {
         if (!userId.equals(authorizationService.getCurrentUserId())) {
             throw new AuthorizationException("User is not authorized for this operation.");
         }
-        if (activityRepository.isActivityNameUsed(userId, activity.type())) {
+        if (activityRepository.isActivityNameUsed(userId, activity.name())) {
             throw new ConflictException("Activity name must be unique within the user profile.");
         }
         else {
@@ -63,7 +63,7 @@ public class ActivityJdbcService implements ActivityService {
             throw new AuthorizationException("User is not authorized for this operation.");
         }
         Optional<Activity> existingActivity = activityRepository.findByIdAndUserId(userId, id);
-        if (existingActivity.isPresent() && existingActivity.get().type().equals("SYSTEM")) {
+        if (existingActivity.isPresent()) {
             throw new AuthorizationException("Modifying SYSTEM activity type is not allowed.");
         }
         if (activityRepository.isActivityNameUsedExcludingId(userId, updatedActivity.name(), id)) {
@@ -79,7 +79,7 @@ public class ActivityJdbcService implements ActivityService {
             throw new AuthorizationException("User is not authorized for this operation.");
         }
         Optional<Activity> activity = activityRepository.findByIdAndUserId(userId, id);
-        if (activity.isPresent() && activity.get().type().equals("SYSTEM")) {
+        if (activity.isPresent()) {
             throw new AuthorizationException("Deleting SYSTEM activity type is not allowed.");
         }
         if (activityRepository.isActivityTypeUsedInUserActivities(id)) {
