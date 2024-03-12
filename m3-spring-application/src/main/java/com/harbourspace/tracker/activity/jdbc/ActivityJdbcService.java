@@ -46,7 +46,7 @@ public class ActivityJdbcService implements ActivityService {
         }
     }
 
-    public Activity addActivity(Long userId, Activity activity) throws ConflictException, AuthorizationException {
+    public Activity addActivity(Long userId, NewActivity activity) throws ConflictException, AuthorizationException {
         if (!userId.equals(authorizationService.getCurrentUserId())) {
             throw new AuthorizationException("User is not authorized for this operation.");
         }

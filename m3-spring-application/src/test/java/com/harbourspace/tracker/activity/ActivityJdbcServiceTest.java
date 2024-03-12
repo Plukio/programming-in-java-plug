@@ -3,6 +3,7 @@ package com.harbourspace.tracker.activity;
 import com.harbourspace.tracker.activity.jdbc.ActivityJdbcRepository;
 import com.harbourspace.tracker.activity.jdbc.ActivityJdbcService;
 import com.harbourspace.tracker.activity.model.Activity;
+import com.harbourspace.tracker.activity.model.NewActivity;
 import com.harbourspace.tracker.authorization.AuthorizationService;
 import com.harbourspace.tracker.error.AuthorizationException;
 import org.junit.jupiter.api.Assertions;
@@ -52,7 +53,7 @@ public class ActivityJdbcServiceTest {
     @Test
     @DisplayName("should create an activity for a user")
     public void testCreateActivity() {
-        Activity newActivity = new Activity(null, 1L, "USER", "New Activity", 5.0);
+        NewActivity newActivity = new NewActivity( 1L, "USER", "New Activity", 5.0);
         when(activityRepository.insert(1L, newActivity)).thenReturn(ActivityFixtures.newUserActivity);
 
         Activity createdActivity = activityService.addActivity(1L, newActivity);
