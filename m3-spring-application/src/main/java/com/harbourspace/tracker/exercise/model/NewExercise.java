@@ -9,11 +9,10 @@ public record NewExercise(
         Long userId,
         Long activityId,
         LocalDateTime startTime,
-        Integer duration
-) {
+        Integer duration) {
     public Exercise toExercise(Long Exid) {
 
-        return new Exercise(Exid, this.userId, this.activityId, this.startTime, this.duration);
+        return new Exercise(Exid, this.userId, this.activityId, this.startTime, this.duration, 0.0);
     }
 
 }

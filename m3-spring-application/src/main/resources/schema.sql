@@ -19,5 +19,6 @@ create table if not exists exercises
     user_id bigint not null references users(id) on delete cascade,
     activity_id bigint not null references activity(id),
     start_time timestamp not null,
-    duration bigint not null
+    duration bigint not null,
+    kcal double not null
 );

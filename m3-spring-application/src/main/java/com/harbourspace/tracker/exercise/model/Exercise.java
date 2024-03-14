@@ -7,7 +7,8 @@ public record Exercise(
     Long userId,
     Long activityId,
     LocalDateTime startTime,
-    Integer duration
+    Integer duration,
+    double kcalBurned
 ) {
 
 }

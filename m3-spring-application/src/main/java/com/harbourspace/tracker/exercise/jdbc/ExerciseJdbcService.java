@@ -1,5 +1,7 @@
 package com.harbourspace.tracker.exercise.jdbc;
 
+import com.harbourspace.tracker.activity.jdbc.ActivityJdbcRepository;
+import com.harbourspace.tracker.activity.model.Activity;
 import com.harbourspace.tracker.authorization.AuthorizationService;
 import com.harbourspace.tracker.error.AuthorizationException;
 import com.harbourspace.tracker.exercise.ExerciseService;
@@ -19,10 +21,12 @@ public class ExerciseJdbcService implements ExerciseService {
     private final Logger logger = LoggerFactory.getLogger(ExerciseJdbcService.class);
     private final ExerciseJdbcRepository exerciseRepository;
     private final AuthorizationService authorizationService;
+    private final ActivityJdbcRepository activityJdbcRepository;
 
-    public ExerciseJdbcService(ExerciseJdbcRepository exerciseRepository, AuthorizationService authorizationService) {
+    public ExerciseJdbcService(ExerciseJdbcRepository exerciseRepository, AuthorizationService authorizationService, ActivityJdbcRepository activityJdbcRepository) {
         this.exerciseRepository = exerciseRepository;
         this.authorizationService = authorizationService;
+        this.activityJdbcRepository = activityJdbcRepository;
     }
 
     @Override
@@ -62,10 +66,13 @@ public class ExerciseJdbcService implements ExerciseService {
     public Exercise createExercise(Long userId, NewExercise exercise) {
         if (!userId.equals(authorizationService.getCurrentUserId())) {
             throw unauthorized();
-        }
-        else {
+        } else {
             logger.debug("Adding new exercise for user {}: {}", userId, exercise);
-            return exerciseRepository.insert(exercise);
+            Optional<Activity> activity  = activityJdbcRepository.findByIdAndUserId(exercise.userId(), exercise.activityId());
+            if (activity.isPresent()) {
+                return exerciseRepository.insert(exercise, activity.get().kcalPerMinute() * exercise.duration());
+            }
+            return exerciseRepository.insert(exercise, 0.0);
         }
     }
 
@@ -77,7 +84,11 @@ public class ExerciseJdbcService implements ExerciseService {
 
         else {
             logger.debug("Updating exercise {} for user {}: {}", id, userId, updatedExercise);
-            return exerciseRepository.update(id, userId, updatedExercise);
+            Optional<Activity> activity  = activityJdbcRepository.findByIdAndUserId(updatedExercise.userId(), updatedExercise.activityId());
+            if (activity.isPresent()) {
+                return exerciseRepository.update(id, userId, updatedExercise, activity.get().kcalPerMinute() * updatedExercise.duration());
+            }
+            return exerciseRepository.update(id, userId, updatedExercise, 0.0);
         }
     }
 
